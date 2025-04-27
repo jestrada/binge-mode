@@ -1,0 +1,37 @@
+{
+  "manifest_version": 3,
+  "name": "Binge Mode",
+  "version": "0.1.0",
+  "description": "Automatically skips intros and recaps on popular streaming services...",
+  "permissions": ["storage"],
+  "content_scripts": [
+    {
+      "matches": [
+        "*://*.netflix.com/*",
+        "*://*.peacocktv.com/*",
+        "*://*.hulu.com/*",
+        "*://*.disneyplus.com/*",
+        "*://*.primevideo.com/*",
+        "*://*.hbomax.com/*",
+        "*://*.max.com/*",
+        "*://*.paramountplus.com/*",
+        "*://tv.apple.com/*",
+        "*://*.discoveryplus.com/*",
+        "*://*.starz.com/*"
+      ],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "action": {
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png"
+    }
+  }
+}
