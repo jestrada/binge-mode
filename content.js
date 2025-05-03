@@ -33,21 +33,24 @@ console.log("Binge Mode content script injected!");
     const texts = getButtonTexts().map((t) => t.toLowerCase());
     const elements = [...document.querySelectorAll("button, a")];
     for (const el of elements) {
-      // Get both visible text and aria-label for matching
       const text = el.innerText.trim().toLowerCase();
       const aria = (el.getAttribute("aria-label") || "").trim().toLowerCase();
       const testid = (el.getAttribute("data-testid") || "").toLowerCase();
-      // Match if innerText or aria-label matches skip keywords, or data-testid indicates skip-button
       const isMatch =
         texts.includes(text) ||
         texts.includes(aria) ||
         testid.includes("skip-button");
       if (isMatch && isVisible(el) && !clickedButtons.has(el)) {
-        console.log("Binge Mode: clicking skip button:", el);
+        console.log("Binge Mode: skipping via button:", {
+          el,
+          text,
+          aria,
+          testid,
+        });
         clickedButtons.add(el);
-        // remove this element from the set after CLEAR_DELAY so it can be clicked again later
         setTimeout(() => clickedButtons.delete(el), CLEAR_DELAY);
-        el.click();
+        // Dispatch a series of events to simulate a real user click
+        triggerClick(el);
       }
     }
   }
@@ -61,4 +64,40 @@ console.log("Binge Mode content script injected!");
   observer.observe(document.body, { childList: true, subtree: true });
   // Initial scan in case the button is already present
   scanAndClick();
+
+  /**
+   * Simulate a real mouse/pointer click by dispatching events in sequence.
+   */
+  function triggerClick(el) {
+    console.debug("Binge Mode: triggerClick", el);
+    // Calculate center position for realistic clientX/Y
+    const rect = el.getBoundingClientRect();
+    const x = rect.left + rect.width / 2;
+    const y = rect.top + rect.height / 2;
+    // Try focusing the element first
+    try { el.focus(); } catch {};
+    const eventTypes = [
+       'mouseover', 'mouseenter', 'mousemove',
++      'touchstart', // Add touchstart
+       'pointerover', 'pointerdown', 'mousedown',
++      'touchend', // Add touchend
+       'pointerup', 'mouseup', 'click'
+     ];
+     for (const type of eventTypes) {
+      console.debug(`Binge Mode: event ${type}`, { x, y });
+      const evt = new MouseEvent(type, {
+        view: window,
+        bubbles: true,
+        cancelable: true,
+        composed: true,
+        clientX: x,
+        clientY: y,
+      });
+      el.dispatchEvent(evt);
+    }
+    // Fallback to native click
+    try {
+      el.click();
+    } catch {}
+  }
 })();

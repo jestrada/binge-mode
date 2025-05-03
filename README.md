@@ -4,31 +4,31 @@ Wave goodbye to those endless intros, recaps, and sneaky ads that stall your str
 
 ## How It Works
 
-1. You hit play.  
-2. Binge Mode springs into action, scans the page, and clicks any skip buttons faster than you can say "One more episode!"  
+1. You hit play.
+2. Binge Mode springs into action, scans the page, and clicks any skip buttons faster than you can say "One more episode!"
 3. Repeat for every episode or movie—Binge Mode even resets itself when the URL changes, so it never misses a beat.
 
 ## Supported Services
 
-- Netflix  
-- Peacock  
-- Hulu  
-- HBO Max & play.max.com  
-- Disney+  
-- Prime Video  
-- Paramount+  
-- Apple TV+  
-- Discovery+  
-- Starz  
+- Netflix
+- Peacock
+- Hulu
+- HBO Max & play.max.com
+- Disney+
+- Prime Video
+- Paramount+
+- Apple TV+
+- Discovery+
+- Starz
 
 Got another service in mind? Let us know or file a quick PR—sharing is caring! ❤️
 
 ## Installation
 
-1. Clone or download this repo  
-2. Open your browser’s extensions page (e.g., `chrome://extensions`)  
-3. Enable “Developer mode” and click “Load unpacked”  
-4. Select the `binge-mode/` folder  
+1. Clone or download this repo
+2. Open your browser’s extensions page (e.g., `chrome://extensions`)
+3. Enable “Developer mode” and click “Load unpacked”
+4. Select the `binge-mode/` folder
 5. Hit play on your favorite show and binge away!
 
 ## Contributing
