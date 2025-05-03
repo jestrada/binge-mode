@@ -8,6 +8,12 @@ Wave goodbye to those endless intros, recaps, and sneaky ads that stall your str
 2. Binge Mode springs into action, scans the page, and clicks any skip buttons faster than you can say "One more episode!"
 3. Repeat for every episode or movie—Binge Mode even resets itself when the URL changes, so it never misses a beat.
 
+## Demo
+Just tap play, sit back, and binge:
+
+https://github.com/user-attachments/assets/26ba8349-e893-4aa8-b83a-141773efe651
+
+
 ## Supported Services
 
 - Netflix
