@@ -29,25 +29,6 @@ console.log("Binge Mode content script injected!");
     return defaultButtonTexts;
   }
 
-  // Sound playback throttle
-  let lastSoundTime = 0;
-  const SOUND_THROTTLE_MS = 2000; // 2 seconds between sounds
-  const SKIP_SOUND_PATH = chrome.runtime.getURL("sounds/beep.wav");
-
-  function playSkipSound() {
-    try {
-      const now = Date.now();
-      if (now - lastSoundTime < SOUND_THROTTLE_MS) return;
-      lastSoundTime = now;
-      const audio = new Audio(SKIP_SOUND_PATH);
-      audio.volume = 0.5;
-      audio.play().catch(() => {});
-      console.log("Binge Mode: played skip sound:", SKIP_SOUND_PATH);
-    } catch (e) {
-      console.error("Binge Mode: Error playing sound:", e);
-    }
-  }
-
   function scanAndClick() {
     const texts = getButtonTexts().map((t) => t.toLowerCase());
     const elements = [...document.querySelectorAll("button, a")];
@@ -59,19 +40,13 @@ console.log("Binge Mode content script injected!");
         texts.includes(text) ||
         texts.includes(aria) ||
         testid.includes("skip-button");
-      if (isMatch && isVisible(el) && !clickedButtons.has(el)) {
-        console.log("Binge Mode: skipping via button:", {
-          el,
-          text,
-          aria,
-          testid,
-        });
-        clickedButtons.add(el);
-        setTimeout(() => clickedButtons.delete(el), CLEAR_DELAY);
-        // Play sound (throttled)
-        playSkipSound();
-        // Dispatch a series of events to simulate a real user click
-        triggerClick(el);
+      if (isMatch && isVisible(el)) {
+        // clickedButtons.add(el);
+        // setTimeout(() => clickedButtons.delete(el), CLEAR_DELAY);
+        // playSkipSound(); // Commented out sound
+        setTimeout(() => {
+          triggerClick(el);
+        }, 300);
       }
     }
   }
@@ -83,8 +58,16 @@ console.log("Binge Mode content script injected!");
 
   const observer = new MutationObserver(scanAndClick);
   observer.observe(document.body, { childList: true, subtree: true });
-  // Initial scan in case the button is already present
-  scanAndClick();
+  // Initial scan in case the button is already present (with delay)
+  setTimeout(scanAndClick, 500);
+
+  // Also scan when the page regains focus or becomes visible
+  window.addEventListener("focus", () => setTimeout(scanAndClick, 300));
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible") {
+      setTimeout(scanAndClick, 300);
+    }
+  });
 
   /**
    * Simulate a real mouse/pointer click by dispatching events in sequence.
