@@ -29,6 +29,25 @@ console.log("Binge Mode content script injected!");
     return defaultButtonTexts;
   }
 
+  // Sound playback throttle
+  let lastSoundTime = 0;
+  const SOUND_THROTTLE_MS = 2000; // 2 seconds between sounds
+  const SKIP_SOUND_PATH = chrome.runtime.getURL("sounds/beep.wav");
+
+  function playSkipSound() {
+    try {
+      const now = Date.now();
+      if (now - lastSoundTime < SOUND_THROTTLE_MS) return;
+      lastSoundTime = now;
+      const audio = new Audio(SKIP_SOUND_PATH);
+      audio.volume = 0.5;
+      audio.play().catch(() => {});
+      console.log("Binge Mode: played skip sound:", SKIP_SOUND_PATH);
+    } catch (e) {
+      console.error("Binge Mode: Error playing sound:", e);
+    }
+  }
+
   function scanAndClick() {
     const texts = getButtonTexts().map((t) => t.toLowerCase());
     const elements = [...document.querySelectorAll("button, a")];
@@ -49,6 +68,8 @@ console.log("Binge Mode content script injected!");
         });
         clickedButtons.add(el);
         setTimeout(() => clickedButtons.delete(el), CLEAR_DELAY);
+        // Play sound (throttled)
+        playSkipSound();
         // Dispatch a series of events to simulate a real user click
         triggerClick(el);
       }
@@ -75,15 +96,23 @@ console.log("Binge Mode content script injected!");
     const x = rect.left + rect.width / 2;
     const y = rect.top + rect.height / 2;
     // Try focusing the element first
-    try { el.focus(); } catch {};
+    try {
+      el.focus();
+    } catch {}
     const eventTypes = [
-       'mouseover', 'mouseenter', 'mousemove',
-+      'touchstart', // Add touchstart
-       'pointerover', 'pointerdown', 'mousedown',
-+      'touchend', // Add touchend
-       'pointerup', 'mouseup', 'click'
-     ];
-     for (const type of eventTypes) {
+      "mouseover",
+      "mouseenter",
+      "mousemove",
+      +"touchstart", // Add touchstart
+      "pointerover",
+      "pointerdown",
+      "mousedown",
+      +"touchend", // Add touchend
+      "pointerup",
+      "mouseup",
+      "click",
+    ];
+    for (const type of eventTypes) {
       console.debug(`Binge Mode: event ${type}`, { x, y });
       const evt = new MouseEvent(type, {
         view: window,
